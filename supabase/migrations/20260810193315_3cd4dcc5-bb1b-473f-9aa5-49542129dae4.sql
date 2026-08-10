@@ -1,0 +1,101 @@
+
+INSERT INTO public.menu_categories (id, name, sort_order) VALUES
+('appetizers','Appetizers',1),
+('beverages','Beverages',2),
+('sea-food','Sea Food',3),
+('sandwiches','Sandwiches',4),
+('beef','Beef',5),
+('mains','Mains',6),
+('noodles','Noodles',7),
+('pasta','Pasta',8),
+('soups','Soups',9),
+('burgers','Burgers',10),
+('from-the-wok','From the Wok',11),
+('steaks','Steaks',12),
+('salads','Salads',13),
+('platters','Platters',14);
+
+INSERT INTO public.menu_items (id, category_id, name, description, price, featured, sort_order) VALUES
+('french-fries','appetizers','French Fries','Plain fries, herbs fries & masala fries',899,false,1),
+('fish-and-chips','appetizers','Fish And Chips','Crispy batter Fried fish paired with a generous serving of golden fries, served with a side of tangy tarter sauce',2299,false,2),
+('dynamite-shrimp','appetizers','Dynamite Shrimp','Tossed in a bold and creamy homemade spicy mayonnaise sauce, our batter-fried prawn creates an explosion of flavor',1799,true,3),
+('chicago-fire-fries','appetizers','Chicago Fire Fries','Cheese fries topped with jalapenos',999,false,4),
+('mac-and-cheese-ball','appetizers','Mac And Cheese Ball','4 pieces of cheddar and mozzarella cheese balls, in a delightful creamy macaroni pasta served with honey mustard sauce.',1399,false,5),
+('korean-fried-chicken','appetizers','Korean Fried Chicken','Flavorful elements of Korean style fried Chicken with savory soya sauce, chili paste and sesame seed.',1299,true,6),
+('sesame-honey-wings','appetizers','Sesame Honey Wings','Delicious Fried wings with the richness of honey, complementing the toasted notes of the sesame seed.',999,false,7),
+('tempura-prawns','appetizers','Tempura Prawns','Four pieces of crispy and crunchy tender fried prawns coated with Japanese tempura flour, served with tempura sauce.',2399,false,8),
+
+('strawberry-fruit-mojito','beverages','Strawberry Fruit Mojito','Strawberry syrup',795,false,1),
+('cold-coffee','beverages','Cold Coffee','Single Serving',795,false,2),
+('lemonade','beverages','Lemonade','Single Serving',595,false,3),
+('raspberry-lemonade-with-blue-lagoon','beverages','Raspberry Lemonade With Blue Lagoon','Raspberry with Blue lagoon',795,false,4),
+('americano','beverages','Americano','Single serving',695,false,5),
+('red-bull-250-ml','beverages','Red Bull 250 Ml','Single Serving',995,false,6),
+('nutella-shake','beverages','Nutella Shake','Single Serving',895,false,7),
+('mint-margarita','beverages','Mint Margarita','Single Serving',595,false,8),
+('kiwi-fruit-mojito','beverages','Kiwi Fruit Mojito','Kiwi fruit syrup',795,false,9),
+('peach-iced-tea','beverages','Peach Iced Tea','Peach ice tea syrup',695,false,10),
+('aquafina-water-500-ml','beverages','Aquafina Water - 500 Ml','Pure water for a perfect taste! Click to add refreshing water to your meal.',195,false,11),
+('cappuccino','beverages','Cappuccino','Single serving',795,false,12),
+('aquafina-water-1-5-litre','beverages','Aquafina Water - 1.5 Litre','Pure water for a perfect taste! Click to add refreshing water to your meal.',295,false,13),
+('tea','beverages','Tea','Single serving',595,false,14),
+('passion-fruit-mojito-with-strawberry','beverages','Passion Fruit Mojito With Strawberry','Passion fruit syrup',795,false,15),
+
+('sesame-crusted-prawn','sea-food','Sesame Crusted Prawn','Soya sauce, honey, vinegar, tempura flour, white sesame',1850,false,1),
+('crispy-honey-prawn','sea-food','Crispy Honey Prawn','Batter fried Crispy Prawn pieces cooked in luscious honey sauce, garnished with sesame seeds and lime slices.',1850,false,2),
+('fish-cashewnut','sea-food','Fish Cashewnut','Deep-fried sole fish cooked to perfection with crunchy cashews. Flavorful sauce and capsicums elevate the taste',1850,false,3),
+('kung-pao-prawns','sea-food','Kung Pao Prawns','Batter fried prawn in our signature tangy spicy sauce enhanced by the satisfying crunch of roasted peanuts. Its an irresistible combination that brings the essence of Kung Pao cuisine to your plate.',1850,false,4),
+
+('club-sandwich','sandwiches','Club Sandwich','Serves 1',1699,false,1),
+('supreme-chicken-sandwich','sandwiches','Supreme Chicken Sandwich','Serves 1',1799,false,2),
+('roasted-beef-sandwich','sandwiches','Roasted Beef Sandwich','Savor the essence of our iconic Philly steak sandwich- thin sliced tender beef steak meets sautéed onions and Green Capsicums, topped with melted cheese. Served with fries.',1899,false,3),
+
+('sesame-beef','beef','Sesame Beef','Delight your senses with our batter fried sesame beef, wok tossed to perfection with basil leaves in soy sauce and chili paste.',1750,false,1),
+('beef-chilli-dry','beef','Beef Chilli Dry','Tenderloin beef made to perfection and cooked in spicy Ginger, green chili and soy sauce.',1750,false,2),
+('mongolian-beef','beef','Mongolian Beef','Tender slices of stir-fried beef bathed in savory Thai oyster sauce, basil and chili paste Each bite is a journey through the bold Mongolian cuisine to your plate.',1850,false,3),
+('cashew-nuts-beef','beef','Cashew Nuts Beef','Immerse your taste buds in Tenderloin beef and paste and oyster sauce',1850,false,4),
+
+('bellagio-chicken','mains','Bellagio Chicken','Deep fried chicken, spicy penne pasta, pesto sauce',1999,false,1),
+('stuffed-chicken','mains','Stuffed Chicken','Experience the culinary magic of our cheese stuffed chicken, served on creamy mashed potatoes with an mushroom sauce and sauté vegetables.',2199,false,2),
+('mushroom-roulade','mains','Mushroom Roulade','Deep fried Chicken stuffed with butter, mushrooms and savory mushroom sauce, served with mashed potatoes.',2199,false,3),
+('swiss-polo','mains','Swiss Polo','Relish the exquisite flavors of our stuffed chicken with cheese and spinach, served with jalapeno sauce made in orange extract, French fries and sauté vegetables.',2199,false,4),
+('parmesan-chicken','mains','Parmesan Chicken','Chicken breast fillet coated with a light batter, served with penne Alfredo and topped with fresh Parmesan cheese to delight in a cheesy experience.',2199,true,5),
+('moroccan-chicken','mains','Moroccan Chicken','Marinated chicken breast served with sauce',2499,false,6),
+
+('chicken-chowmein','noodles','Chicken Chowmein','Stir fried chicken served with homemade noodles, infused in oyster sauce, green onions, cabbage and carrot.',1599,false,1),
+('beef-diablo-noodles','noodles','Beef Diablo Noodles','Stir fried beef served with homemade noodles, infused in oyster sauce, green onions, cabbage and carrot.',1799,false,2),
+
+('fettuccine-alfredo-pasta','pasta','Fettuccine Alfredo Pasta','A rich blend of white sauce with butter, heavy cream, and Parmesan cheese in Fettuccine pasta, topped with crispy fried chicken and served with cheesy garlic bread.',1999,true,1),
+('penne-arrabiata','pasta','Penne Arrabiata','Red sauce made from garlic, tomatoes and dried red chilies tossed with penne and chicken',1899,false,2),
+('fettucine-florentine-pasta','pasta','Fettucine Florentine Pasta','A Tuscan-inspired pasta generously tossed in medley of sautéed creamy spinach, garlic and tomatoes topped with pieces of grilled chicken',1899,false,3),
+
+('cream-of-mushroom-soup','soups','Cream Of Mushroom Soup','Super creamy textured soup containing cooking cream, black mushroom, butter mushroom',899,false,1),
+('thai-clear-soap','soups','Thai Clear Soap','Serves 1',699,false,2),
+('hot-and-sour-soup','soups','Hot And Sour Soup','Single Serving, spicy and tangy, this soup is a bowl of ultimate comfort; the thickened broth contains chicken, egg, white vinegar and corn flour.',699,false,3),
+('seafood-chowder-soup','soups','Seafood Chowder Soup','Single serving',899,false,4),
+('loft-special-soup','soups','Loft Special Soup','Single serving, well prepared soup with shiitake mushrooms, prawn, chicken and beef.',999,false,5),
+
+('crispy-fried-chicken-burger','burgers','Crispy Fried Chicken Burger','Boneless breast fillet coated with a light crispy batter served with italian coleslaw sriracha mayonnaise dip and fries',1399,false,1),
+('double-decker-burger','burgers','Double Decker Burger','Filled with cheese that oozes out at the first bite',1999,true,2),
+('grilled-beef-burger','burgers','Grilled Beef Burger','Grilled beef petty, fresh tomato, cucumber, mayonnaise',1699,false,3),
+('stuffed-chicken-burger','burgers','Stuffed Chicken Burger','A succulent chicken patty generously filled with cheese and layered with fresh Lettuce and Onion Rings on toasted burger buns. Served with French fries.',1499,false,4),
+
+('suntzu','from-the-wok','SunTzu','A harmonious blend of Stir-fried chicken, with tomatoes, dark soy souce',2199,false,1),
+('chilli-dry','from-the-wok','Chilli Dry','Aromatic fusion of heat and spice, where chicken pieces are Stir-fried to perfection and coated in spicy Ginger and green chili soy sauce.',2199,false,2),
+('kung-pao-chicken','from-the-wok','Kung Pao Chicken','Stir-fried chicken in our signature spicy sauce, enhanced with the crunch of roasted peanuts bringing the essence of Kung pao cuisine to your plate.',2199,true,3),
+('crispy-honey-chicken','from-the-wok','Crispy Honey Chicken','Tomato ketchup, oyster sauce, honey',2199,false,4),
+('loft-signature-chicken','from-the-wok','Loft Signature Chicken','Savory Miso glazed chicken featuring tender honey glazed chicken, blend of miso paste, soya sauce and aromatic seasoning giving an umami experience.',2199,false,5),
+('sesame-crusted-chicken','from-the-wok','Sesame Crusted Chicken','Succulent pieces of tender fried chicken glazed with luscious sesame-infused soya sauce and basil leaves, creating a perfect harmony of sweet and savory flavors.',2199,false,6),
+('mongolian-chicken','from-the-wok','Mongolian Chicken','Thai oyster sauce, basil, chilli paste',2199,false,7),
+('cashewnut-chicken','from-the-wok','Cashewnut Chicken','Tender pieces of chicken are wok tossed to perfection with crunchy cashews. The dish is elevated by capsicums cooked in a flavorful sauce.',2199,false,8),
+
+('black-pepper-beef-steak','steaks','Black Pepper Beef Steak','Experience Tenderloin beef steak in demi glace sauce, served with mashed potatoes and sauté vegetables.',3499,false,1),
+('loft-signature-beef-steak','steaks','Loft Signature Beef Steak','Tender slices of meticulously selected beef, expertly grilled to preferred doneness, served in Japanese sauce in Japanese style with mashed potatoes and spinach.',3899,true,2),
+('wild-mushroom-beef-steak','steaks','Wild Mushroom Beef Steak','Tenderloin beef with brown shiitake mushroom sauce, served with mashed potato, sauté vegetables and spinach',3599,false,3),
+
+('caesar-salad','salads','Caesar Salad','Single Serving',1399,false,1),
+('signature-prawn-salad','salads','Signature Prawn Salad','Succulent prawns, vibrant mixed green iceberg honey dressing create our signature salad.',1499,false,2),
+
+('sea-food-platter','platters','Sea Food Platter','An assortment of our best seafood items served with a variety of sweat and tangy sauces served with fries',3699,true,1),
+('beef-steak-platter','platters','Beef Steak Platter','Chefs recommendation. of tenderloin beef steak. Served with side of creamy spinach, mashed or baked potato & tangy sauces along with vegetables',3599,false,2),
+('grilled-chicken-fillet-platter','platters','Grilled Chicken Fillet Platter','Three Chicken breast fillets served with mushrooms sauce black pepper sauce, garlic rice',2999,false,3);
