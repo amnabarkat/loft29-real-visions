@@ -5,6 +5,18 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
+ * LOFT 29 — design system.
+ * Palette is sampled from the restaurant's real lighting: green structural
+ * steel, magenta/purple wash, warm orange container glow, night-black sky.
+ */
+
+@theme {
+  --font-display: "Anton", "Arial Narrow", sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, monospace;
+}
+
+/*
  * Design system definition.
  *
  * The @theme inline block maps CSS custom properties to Tailwind utility
