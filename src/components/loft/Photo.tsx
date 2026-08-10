@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type PhotoProps = {
@@ -27,6 +27,12 @@ export function Photo({
   position = "center",
 }: PhotoProps) {
   const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // Images can finish loading before hydration attaches onLoad.
+  useEffect(() => {
+    if (imgRef.current?.complete) setLoaded(true);
+  }, []);
 
   return (
     <div
@@ -44,6 +50,7 @@ export function Photo({
         style={{ objectPosition: position }}
       />
       <img
+        ref={imgRef}
         src={image.src}
         srcSet={image.srcSet}
         sizes={sizes}
