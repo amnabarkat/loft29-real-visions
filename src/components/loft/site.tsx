@@ -118,7 +118,7 @@ export function Hero() {
         />
       </picture>
       <div className="absolute inset-0 night-veil" />
-      <div className="absolute inset-0 bg-background/25" />
+      <div className="absolute inset-0 bg-background/15" />
 
       <div className="relative z-10 flex min-h-[100svh] items-end">
         <div className="mx-auto w-full max-w-[1600px] px-5 pb-16 md:px-10 md:pb-24">
@@ -217,8 +217,8 @@ export function Architecture() {
         </p>
       </Reveal>
 
-      <div className="relative grid gap-5 md:grid-cols-12 md:gap-6">
-        <Reveal className="md:col-span-9 md:col-start-4">
+      <div className="relative grid gap-8 md:grid-cols-12 md:gap-6">
+        <Reveal className="md:col-span-8 md:col-start-5">
           <figure>
             <Photo
               image={I.exteriorNeon}
@@ -233,10 +233,7 @@ export function Architecture() {
           </figure>
         </Reveal>
 
-        <Reveal
-          delay={120}
-          className="md:col-span-5 md:col-start-1 md:-mt-40 md:z-10"
-        >
+        <Reveal delay={120} className="md:col-span-4 md:col-start-1 md:row-start-1 md:mt-32">
           <figure>
             <Photo
               image={I.facadeWide}
@@ -250,7 +247,7 @@ export function Architecture() {
           </figure>
         </Reveal>
 
-        <Reveal delay={200} className="md:col-span-5 md:col-start-8 md:-mt-16">
+        <Reveal delay={200} className="md:col-span-5 md:col-start-2 md:-mt-24">
           <figure>
             <Photo
               image={I.exteriorSignage}
