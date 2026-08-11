@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { getCatalog } from "@/lib/ordering.functions";
+import { getCatalog, type Catalog } from "@/lib/ordering.functions";
 import { OrderShell, Field, inputClass } from "@/components/loft/order-shell";
 import { useCart } from "@/context/cart";
 import { formatPkr } from "@/lib/menu-images";
@@ -38,7 +38,7 @@ export const Route = createFileRoute("/order")({
 });
 
 function OrderPage() {
-  const { categories, items, zones, settings } = Route.useLoaderData();
+  const { categories, items, zones, settings } = Route.useLoaderData() as Catalog;
   const cart = useCart();
   const [active, setActive] = useState<string>(categories[0]?.id ?? "");
   const [query, setQuery] = useState("");

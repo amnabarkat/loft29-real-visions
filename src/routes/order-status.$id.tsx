@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getOrderStatus } from "@/lib/ordering.functions";
+import { getOrderStatus, type OrderStatusData } from "@/lib/ordering.functions";
 import { OrderShell } from "@/components/loft/order-shell";
 import { formatPkr } from "@/lib/menu-images";
 
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/order-status/$id")({
 });
 
 function StatusPage() {
-  const data = Route.useLoaderData();
+  const data = Route.useLoaderData() as OrderStatusData;
 
   if (!data) {
     return (

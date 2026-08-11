@@ -4,6 +4,30 @@ import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 
 type T = Database["public"]["Tables"];
+export type OrderStatusData = {
+  order: Pick<
+    T["orders"]["Row"],
+    | "id"
+    | "order_number"
+    | "customer_name"
+    | "zone_name"
+    | "delivery_address"
+    | "estimated_time"
+    | "subtotal"
+    | "delivery_fee"
+    | "tax_amount"
+    | "service_charge"
+    | "packaging_fee"
+    | "total"
+    | "payment_method"
+    | "payment_status"
+    | "order_status"
+    | "created_at"
+  >;
+  items: Pick<T["order_items"]["Row"], "name_snapshot" | "price_snapshot" | "quantity" | "subtotal">[];
+  events: Pick<T["order_status_events"]["Row"], "status" | "note" | "created_at">[];
+} | null;
+
 export type Catalog = {
   categories: T["menu_categories"]["Row"][];
   items: T["menu_items"]["Row"][];

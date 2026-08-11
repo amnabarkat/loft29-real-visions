@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { getCatalog, placeOrder } from "@/lib/ordering.functions";
+import { getCatalog, placeOrder, type Catalog } from "@/lib/ordering.functions";
 import { OrderShell, Field, inputClass } from "@/components/loft/order-shell";
 import { useCart } from "@/context/cart";
 import { formatPkr } from "@/lib/menu-images";
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/checkout")({
 });
 
 function CheckoutPage() {
-  const { zones, settings } = Route.useLoaderData();
+  const { zones, settings } = Route.useLoaderData() as Catalog;
   const cart = useCart();
   const navigate = useNavigate();
   const submit = useServerFn(placeOrder);
@@ -56,7 +56,7 @@ function CheckoutPage() {
     paymentMethod: "cod" as "cod" | "bank_transfer",
   });
 
-  const zone = zones.find((z: { id: string }) => z.id === cart.zoneId) ?? null;
+  const zone = zones.find((z) => z.id === cart.zoneId) ?? null;
   const deliveryFee = zone?.delivery_fee ?? 0;
   const tax = settings?.tax_enabled ? Math.round((cart.subtotal * Number(settings.tax_rate)) / 100) : 0;
   const service = settings?.service_charge_enabled
@@ -71,8 +71,14 @@ function CheckoutPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!cart.zoneId) return toast.error("Please pick your delivery area.");
-    if (cart.lines.length === 0) return toast.error("Your cart is empty.");
+    if (!cart.zoneId) {
+      toast.error("Please pick your delivery area.");
+      return;
+    }
+    if (cart.lines.length === 0) {
+      toast.error("Your cart is empty.");
+      return;
+    }
     setBusy(true);
     try {
       const res = await submit({
@@ -133,7 +139,7 @@ function CheckoutPage() {
               required
             >
               <option value="">Select your area…</option>
-              {zones.map((z: { id: string; name: string }) => (
+              {zones.map((z) => (
                 <option key={z.id} value={z.id}>
                   {z.name}
                 </option>
