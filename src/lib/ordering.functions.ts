@@ -3,6 +3,14 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 
+type T = Database["public"]["Tables"];
+export type Catalog = {
+  categories: T["menu_categories"]["Row"][];
+  items: T["menu_items"]["Row"][];
+  zones: T["delivery_zones"]["Row"][];
+  settings: T["restaurant_settings"]["Row"] | null;
+};
+
 function publicClient() {
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
   return createClient<Database>(process.env["SUPABASE_URL"]!, key, {
