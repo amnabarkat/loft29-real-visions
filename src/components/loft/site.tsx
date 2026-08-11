@@ -62,6 +62,12 @@ export function SiteNav() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <Link
+            to="/order"
+            className="rounded-xs bg-primary px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-primary-foreground transition-transform hover:-translate-y-0.5"
+          >
+            Order Now
+          </Link>
           <a
             href="#reserve"
             className="hidden rounded-xs border border-primary/60 bg-primary/10 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-foreground transition-colors hover:bg-primary/25 sm:inline-block"
@@ -83,7 +89,7 @@ export function SiteNav() {
 
       {open && (
         <nav className="border-t border-border bg-background/95 px-5 py-4 backdrop-blur-xl lg:hidden">
-          {NAV.concat([["Reserve", "#reserve"]]).map(([label, href]) => (
+          {NAV.concat([["Order Delivery", "/order"], ["Reserve", "#reserve"]]).map(([label, href]) => (
             <a
               key={href}
               href={href}
