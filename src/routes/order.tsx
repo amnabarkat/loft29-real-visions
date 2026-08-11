@@ -130,30 +130,35 @@ function OrderPage() {
         />
       </div>
 
-      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-8 divide-y divide-border border-y border-border">
         {visible.map((item) => {
           const line = cart.lines.find((l) => l.id === item.id);
           return (
-            <article key={item.id} className="flex flex-col border border-border bg-secondary/20">
-              {item.image_src && item.image_lqip && (
-                <Photo
-                  image={{
-                    src: item.image_src,
-                    srcSet: item.image_srcset ?? item.image_src,
-                    lqip: item.image_lqip,
-                    alt: item.name,
-                  }}
-                  ratio="4 / 3"
-                  sizes="(max-width: 640px) 100vw, 33vw"
-                />
-              )}
-              <div className="flex flex-1 flex-col p-4">
+            <li key={item.id} className="flex items-start gap-4 py-5">
+              {item.image_src && item.image_lqip ? (
+                <div className="w-[70px] shrink-0 sm:w-[96px]">
+                  <Photo
+                    image={{
+                      src: item.image_src,
+                      srcSet: item.image_srcset ?? item.image_src,
+                      lqip: item.image_lqip,
+                      alt: `Loft 29 ${item.name}`,
+                    }}
+                    ratio="1 / 1"
+                    sizes="96px"
+                  />
+                </div>
+              ) : null}
+              <div className="min-w-0 flex-1">
                 <h2 className="text-base font-medium text-foreground">{item.name}</h2>
                 {item.description && (
-                  <p className="mt-1 text-xs text-muted-foreground">{item.description}</p>
+                  <p className="mt-1 max-w-prose text-xs leading-relaxed text-muted-foreground">
+                    {item.description}
+                  </p>
                 )}
-                <div className="mt-auto flex items-center justify-between pt-4">
-                  <span className="font-mono text-sm text-accent">{formatPkr(item.price)}</span>
+                <p className="mt-2 font-mono text-sm text-accent">{formatPkr(item.price)}</p>
+              </div>
+              <div className="shrink-0 pt-1">
                   {!item.available ? (
                     <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                       Sold out
@@ -189,12 +194,11 @@ function OrderPage() {
                       Add
                     </button>
                   )}
-                </div>
               </div>
-            </article>
+            </li>
           );
         })}
-      </div>
+      </ul>
 
       {cart.hydrated && cart.count > 0 && (
         <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 backdrop-blur-xl">
