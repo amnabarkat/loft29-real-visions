@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { getCatalog, type Catalog } from "@/lib/ordering.functions";
 import { OrderShell, Field, inputClass } from "@/components/loft/order-shell";
 import { useCart } from "@/context/cart";
-import { formatPkr } from "@/lib/menu-images";
+import { dishImage, formatPkr } from "@/lib/menu-images";
 import { Photo } from "@/components/loft/Photo";
 
 const title = "Order Online — Loft 29 Paragon City, Lahore";
@@ -135,20 +135,23 @@ function OrderPage() {
           const line = cart.lines.find((l) => l.id === item.id);
           return (
             <li key={item.id} className="flex items-start gap-4 py-5">
-              {item.image_src && item.image_lqip ? (
-                <div className="w-[70px] shrink-0 sm:w-[96px]">
-                  <Photo
-                    image={{
-                      src: item.image_src,
-                      srcSet: item.image_srcset ?? item.image_src,
-                      lqip: item.image_lqip,
-                      alt: `Loft 29 ${item.name}`,
-                    }}
-                    ratio="1 / 1"
-                    sizes="96px"
-                  />
-                </div>
-              ) : null}
+              {(() => {
+                const photo =
+                  item.image_src && item.image_lqip
+                    ? {
+                        src: item.image_src,
+                        srcSet: item.image_srcset ?? item.image_src,
+                        lqip: item.image_lqip,
+                        alt: `Loft 29 ${item.name}`,
+                      }
+                    : dishImage(item.name);
+                if (!photo) return null;
+                return (
+                  <div className="w-[70px] shrink-0 sm:w-[96px]">
+                    <Photo image={photo} ratio="1 / 1" sizes="96px" />
+                  </div>
+                );
+              })()}
               <div className="min-w-0 flex-1">
                 <h2 className="text-base font-medium text-foreground">{item.name}</h2>
                 {item.description && (
