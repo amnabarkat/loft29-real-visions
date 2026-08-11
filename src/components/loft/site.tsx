@@ -296,17 +296,19 @@ export function AfterDark() {
         </div>
       </div>
 
-      <div className="mx-auto grid max-w-[1600px] gap-5 px-5 py-20 md:grid-cols-3 md:gap-6 md:px-10 md:py-28">
-        {[I.lawnPool, I.containersNight, I.firepit].map((img, i) => (
-          <Reveal key={img.src} delay={i * 110}>
-            <Photo
-              image={img}
-              ratio="3 / 4"
-              sizes="(max-width: 768px) 100vw, 33vw"
-              className="lift"
-            />
-          </Reveal>
-        ))}
+      <div className="mx-auto max-w-[1600px] px-5 py-20 md:px-10 md:py-28">
+        <Reveal className="grid gap-10 md:grid-cols-3">
+          {[
+            ["Open-air deck", "Lantern-lit seating around the water feature, washed in magenta."],
+            ["Fire pit terrace", "An open flame on the patterned terrace once the light drops."],
+            ["Glass dining boxes", "Cantilevered rooms suspended over the lawn, glowing green."],
+          ].map(([t, d]) => (
+            <div key={t} className="border-t border-border pt-6">
+              <h3 className="display text-2xl text-foreground">{t}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{d}</p>
+            </div>
+          ))}
+        </Reveal>
       </div>
     </section>
   );
