@@ -110,7 +110,10 @@ function AdminPage() {
   useEffect(() => {
     (async () => {
       const { data: user } = await supabase.auth.getUser();
-      if (!user.user) return setIsAdmin(false);
+      if (!user.user) {
+        setIsAdmin(false);
+        return;
+      }
       const { data } = await supabase.rpc("has_role", {
         _user_id: user.user.id,
         _role: "admin",
@@ -154,7 +157,10 @@ function AdminPage() {
       .from("orders")
       .update({ order_status: status })
       .eq("id", order.id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     await supabase.from("order_status_events").insert({ order_id: order.id, status });
     toast.success(`${order.order_number} → ${status.replace(/_/g, " ")}`);
     void load();
@@ -165,7 +171,10 @@ function AdminPage() {
       .from("menu_items")
       .update({ available: !item.available })
       .eq("id", item.id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setMenu((prev) =>
       prev.map((m) => (m.id === item.id ? { ...m, available: !item.available } : m)),
     );
@@ -176,7 +185,10 @@ function AdminPage() {
       .from("restaurant_settings")
       .update({ accepting_orders: !accepting })
       .eq("id", 1);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setAccepting((v) => !v);
   }
 
