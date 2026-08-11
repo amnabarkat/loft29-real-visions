@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Photo } from "./Photo";
 import { Reveal } from "./Reveal";
-import { loft29Images } from "@/lib/loft29-images";
+import { loft29Images, type Loft29Image } from "@/lib/loft29-images";
 import { loft29Menu } from "@/lib/loft29-menu";
 
 const I = loft29Images;
@@ -350,7 +351,6 @@ export function Food() {
               </span>
               <Link
                 to="/order"
-                search={{ q: dish.name }}
                 className="mt-4 inline-block rounded-xs border border-primary/60 bg-primary/10 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-foreground transition-colors hover:bg-primary/25"
               >
                 Add to cart
@@ -461,7 +461,7 @@ export function Events() {
 
 export function Gallery() {
   // Curated: nine frames, none of them reused from the sections above.
-  const shots: { img: (typeof I)["lawnPool"]; tag: string }[] = [
+  const shots: { img: Loft29Image; tag: string }[] = [
     { img: I.lawnPool, tag: "Space" },
     { img: I.terraceLights, tag: "Space" },
     { img: I.containersNight, tag: "Night" },
