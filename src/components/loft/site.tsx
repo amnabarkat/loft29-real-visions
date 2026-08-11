@@ -317,38 +317,44 @@ export function AfterDark() {
 /* ----------------------------------------------------------------- food */
 
 export function Food() {
-  const featured = I.food.slice(0, 6);
+  const featured = I.food.slice(0, 4);
   return (
     <section id="menu" className="mx-auto max-w-[1600px] px-5 pb-24 md:px-10 md:pb-36">
       <Reveal className="mb-12 md:mb-20">
-        <p className="eyebrow">04 — The Menu</p>
+        <p className="eyebrow">04 — From the Kitchen</p>
         <h2 className="display mt-5 text-[clamp(2.25rem,5.5vw,4.5rem)] text-foreground">
           Continental, wok
           <br />
           and open flame.
         </h2>
+        <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground">
+          Four dishes photographed at Loft 29. The rest of the menu is listed below — order any of
+          it for delivery.
+        </p>
       </Reveal>
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
         {featured.map((dish, i) => (
-          <Reveal key={dish.name} delay={(i % 3) * 110} as="figure" className="group">
+          <Reveal key={dish.name} delay={(i % 4) * 100} as="figure" className="group">
             <Photo
               image={dish}
-              ratio="4 / 3"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              ratio="1 / 1"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               className="lift"
               imgClassName="transition-transform duration-700 group-hover:scale-105"
             />
-            <figcaption className="mt-4 flex items-baseline justify-between gap-4 border-t border-border pt-4">
-              <span>
-                <span className="block text-base text-foreground">{dish.name}</span>
-                <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
-                  {dish.category}
-                </span>
-              </span>
-              <span className="font-mono text-sm text-muted-foreground">
+            <figcaption className="mt-4 border-t border-border pt-4">
+              <span className="block text-base text-foreground">{dish.name}</span>
+              <span className="mt-1 block font-mono text-sm text-muted-foreground">
                 Rs.{dish.price.toLocaleString("en-PK")}
               </span>
+              <Link
+                to="/order"
+                search={{ q: dish.name }}
+                className="mt-4 inline-block rounded-xs border border-primary/60 bg-primary/10 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-foreground transition-colors hover:bg-primary/25"
+              >
+                Add to cart
+              </Link>
             </figcaption>
           </Reveal>
         ))}
@@ -454,15 +460,13 @@ export function Events() {
 /* -------------------------------------------------------------- gallery */
 
 export function Gallery() {
-  const shots = [
-    I.lawnPool,
-    I.exteriorSignage,
-    I.firepit,
-    I.terraceLights,
-    I.exteriorNeon,
-    I.facadeWide,
-    I.containersNight,
-    ...I.food.slice(6, 14),
+  // Curated: nine frames, none of them reused from the sections above.
+  const shots: { img: (typeof I)["lawnPool"]; tag: string }[] = [
+    { img: I.lawnPool, tag: "Space" },
+    { img: I.terraceLights, tag: "Space" },
+    { img: I.containersNight, tag: "Night" },
+    { img: I.firepit, tag: "Night" },
+    ...I.food.slice(4, 9).map((f) => ({ img: f, tag: "Food" })),
   ];
 
   return (
@@ -473,19 +477,22 @@ export function Gallery() {
           Every frame, real.
         </h2>
         <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground">
-          {shots.length} photographs of Loft 29 — the venue as guests have shot it, and the
-          restaurant's own dish photography. Nothing generated, nothing borrowed.
+          Nine photographs of Loft 29 — the venue as guests have shot it, and the restaurant's own
+          dish photography. Nothing generated, nothing borrowed.
         </p>
       </Reveal>
 
-      <div className="columns-2 gap-4 md:columns-3 lg:columns-4 [&>*]:mb-4">
-        {shots.map((img, i) => (
-          <Reveal key={img.src + i} delay={(i % 4) * 80} as="figure" className="break-inside-avoid">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+        {shots.map(({ img, tag }, i) => (
+          <Reveal key={img.src} delay={(i % 3) * 80} as="figure">
             <Photo
               image={img}
-              ratio={i % 3 === 0 ? "3 / 4" : i % 3 === 1 ? "1 / 1" : "4 / 5"}
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              ratio="1 / 1"
+              sizes="(max-width: 640px) 50vw, 33vw"
             />
+            <figcaption className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              {tag}
+            </figcaption>
           </Reveal>
         ))}
       </div>
