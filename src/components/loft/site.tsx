@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Photo } from "./Photo";
 import { Reveal } from "./Reveal";
-import { loft29Images, type Loft29Image } from "@/lib/loft29-images";
-import { loft29Menu } from "@/lib/loft29-menu";
+import { loft29Images } from "@/lib/loft29-images";
+import { dishImage, formatPkr } from "@/lib/menu-images";
+import { useCart } from "@/context/cart";
+import type { Catalog } from "@/lib/ordering.functions";
 
 const I = loft29Images;
 
@@ -17,19 +19,23 @@ export const CONTACT = {
 };
 
 const NAV = [
-  ["The Space", "#space"],
-  ["After Dark", "#after-dark"],
   ["Menu", "#menu"],
+  ["Reviews", "#reviews"],
   ["Events", "#events"],
-  ["Gallery", "#gallery"],
-  ["Find Us", "#location"],
+  ["Contact", "#contact"],
 ];
+
+const btnPrimary =
+  "neon-ring inline-block rounded-xs bg-primary px-7 py-4 font-mono text-[11px] uppercase tracking-[0.25em] text-primary-foreground transition-transform hover:-translate-y-0.5";
+const btnGhost =
+  "inline-block rounded-xs border border-foreground/40 px-7 py-4 font-mono text-[11px] uppercase tracking-[0.25em] text-foreground transition-colors hover:border-accent hover:text-accent";
 
 /* ------------------------------------------------------------------ nav */
 
 export function SiteNav() {
   const [solid, setSolid] = useState(false);
   const [open, setOpen] = useState(false);
+  const { count, hydrated } = useCart();
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 80);
@@ -66,14 +72,15 @@ export function SiteNav() {
             to="/order"
             className="rounded-xs bg-primary px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-primary-foreground transition-transform hover:-translate-y-0.5"
           >
-            Order Now
+            Order Online
           </Link>
-          <a
-            href="#reserve"
-            className="hidden rounded-xs border border-primary/60 bg-primary/10 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-foreground transition-colors hover:bg-primary/25 sm:inline-block"
+          <Link
+            to="/checkout"
+            aria-label="Cart"
+            className="rounded-xs border border-border px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-foreground hover:border-accent"
           >
-            Reserve
-          </a>
+            Cart{hydrated && count > 0 ? ` ${count}` : ""}
+          </Link>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
@@ -89,7 +96,7 @@ export function SiteNav() {
 
       {open && (
         <nav className="border-t border-border bg-background/95 px-5 py-4 backdrop-blur-xl lg:hidden">
-          {NAV.concat([["Order Delivery", "/order"], ["Reserve", "#reserve"]]).map(([label, href]) => (
+          {NAV.map(([label, href]) => (
             <a
               key={href}
               href={href}
@@ -102,6 +109,22 @@ export function SiteNav() {
         </nav>
       )}
     </header>
+  );
+}
+
+/* --------------------------------------------------------- sticky order */
+
+export function StickyOrderCta() {
+  const { count, subtotal, hydrated } = useCart();
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/90 px-5 py-3 backdrop-blur-xl md:hidden">
+      <Link
+        to={hydrated && count > 0 ? "/checkout" : "/order"}
+        className="flex w-full items-center justify-center gap-3 rounded-xs bg-primary px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.25em] text-primary-foreground"
+      >
+        {hydrated && count > 0 ? `Checkout · ${formatPkr(subtotal)}` : "Order Online"}
+      </Link>
+    </div>
   );
 }
 
@@ -128,7 +151,7 @@ export function Hero() {
       <div className="absolute inset-0 bg-background/15" />
 
       <div className="relative z-10 flex min-h-[100svh] items-end">
-        <div className="mx-auto w-full max-w-[1600px] px-5 pb-16 md:px-10 md:pb-24">
+        <div className="mx-auto w-full max-w-[1600px] px-5 pb-20 md:px-10 md:pb-24">
           <div className="max-w-2xl">
             <p className="eyebrow reveal">Paragon City · Lahore</p>
             <h1 className="display reveal mt-5 text-[clamp(3.5rem,14vw,10rem)] text-foreground">
@@ -138,23 +161,19 @@ export function Hero() {
               className="reveal mt-5 font-mono text-xs uppercase tracking-[0.35em] text-accent sm:text-sm"
               style={{ animationDelay: "120ms" }}
             >
-              Dining. Events. Nights.
+              Dining • Events • Experiences
             </p>
-            <div
-              className="reveal mt-9 flex flex-wrap gap-3"
-              style={{ animationDelay: "220ms" }}
-            >
+            <div className="reveal mt-9 flex flex-wrap gap-3" style={{ animationDelay: "220ms" }}>
+              <Link to="/order" className={btnPrimary}>
+                Order Online
+              </Link>
               <a
-                href="#menu"
-                className="neon-ring rounded-xs bg-primary px-7 py-4 font-mono text-[11px] uppercase tracking-[0.25em] text-primary-foreground transition-transform hover:-translate-y-0.5"
+                href={`${CONTACT.whatsapp}?text=${encodeURIComponent("Hi Loft 29 — I'd like to reserve a table.")}`}
+                target="_blank"
+                rel="noreferrer noopener"
+                className={btnGhost}
               >
-                Explore Menu
-              </a>
-              <a
-                href="#reserve"
-                className="rounded-xs border border-foreground/40 px-7 py-4 font-mono text-[11px] uppercase tracking-[0.25em] text-foreground backdrop-blur-sm transition-colors hover:border-accent hover:text-accent"
-              >
-                Reserve
+                Reserve a Table
               </a>
             </div>
           </div>
@@ -164,110 +183,193 @@ export function Hero() {
   );
 }
 
-/* ----------------------------------------------------------- experience */
+/* -------------------------------------------------------- order / zones */
 
-export function Experience() {
-  const stats = [
-    ["4.2★", "857 Google reviews"],
-    ["4.6★", "242 Foodpanda ratings"],
-    ["3 PM – 2 AM", "Open late, every night"],
-  ];
+export function OrderOnline({ zones }: { zones: Catalog["zones"] }) {
+  const cart = useCart();
+  const [selected, setSelected] = useState("");
+  const [checked, setChecked] = useState<string | null>(null);
+  const zone = zones.find((z) => z.id === checked) ?? null;
+
   return (
-    <section className="mx-auto max-w-[1600px] px-5 py-24 md:px-10 md:py-36">
-      <div className="grid gap-14 lg:grid-cols-[1.1fr_1fr] lg:gap-24">
+    <section id="order" className="mx-auto max-w-[1600px] px-5 py-20 md:px-10 md:py-28">
+      <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-20">
         <Reveal>
-          <p className="eyebrow">The Loft 29 Experience</p>
-          <h2 className="display mt-6 text-[clamp(2.5rem,6vw,5rem)] text-foreground">
-            A stack of steel
-            <br />
-            and glass, on grass.
+          <h2 className="display text-[clamp(2.25rem,6vw,4.5rem)] text-foreground">
+            Order from Loft 29.
           </h2>
-          <p className="mt-8 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-            Shipping containers framed in green steel, lifted over a lawn, a water feature and a
-            deck. Glass dining rooms on the upper level, open-air tables below, and colour that
-            changes with the hour.
-          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link to="/order" className={btnPrimary}>
+              Order Online
+            </Link>
+            <a href="#menu" className={btnGhost}>
+              View Menu
+            </a>
+          </div>
         </Reveal>
 
-        <Reveal delay={120} className="grid grid-cols-3 gap-px self-end bg-border">
-          {stats.map(([big, small]) => (
-            <div key={small} className="bg-background px-3 py-8 sm:px-5">
-              <p className="display text-xl text-accent sm:text-3xl">{big}</p>
-              <p className="mt-3 font-mono text-[10px] uppercase leading-relaxed tracking-[0.16em] text-muted-foreground">
-                {small}
+        <Reveal delay={120} className="border border-border bg-card/40 p-6 md:p-9">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+            Where should we deliver?
+          </p>
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <select
+              aria-label="Delivery area"
+              value={selected}
+              onChange={(e) => {
+                setSelected(e.target.value);
+                setChecked(null);
+              }}
+              className="w-full rounded-xs border border-border bg-secondary/40 px-3 py-3 text-sm text-foreground outline-none focus:border-primary"
+            >
+              <option value="">Enter your area…</option>
+              {zones.map((z) => (
+                <option key={z.id} value={z.id}>
+                  {z.name}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              disabled={!selected}
+              onClick={() => {
+                setChecked(selected);
+                cart.setZoneId(selected);
+              }}
+              className="shrink-0 rounded-xs bg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.22em] text-primary-foreground disabled:opacity-40"
+            >
+              Check Delivery
+            </button>
+          </div>
+
+          {checked && zone && (
+            <div className="mt-6 border-t border-border pt-6">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent">
+                ✓ We deliver here
               </p>
+              <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
+                <li>Delivery fee · {formatPkr(zone.delivery_fee)}</li>
+                <li>Minimum order · {formatPkr(zone.minimum_order)}</li>
+                <li>Estimated delivery · {zone.estimated_time}</li>
+              </ul>
+              <Link
+                to="/order"
+                className="mt-6 inline-block rounded-xs border border-primary/60 bg-primary/10 px-6 py-3 font-mono text-[10px] uppercase tracking-[0.22em] text-foreground hover:bg-primary/25"
+              >
+                View Menu
+              </Link>
             </div>
-          ))}
+          )}
+          {checked && !zone && (
+            <div className="mt-6 border-t border-border pt-6">
+              <p className="text-sm text-foreground">
+                Sorry, we don't currently deliver to this area.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setChecked(null);
+                  setSelected("");
+                }}
+                className="mt-4 rounded-xs border border-border px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.22em] text-foreground"
+              >
+                Try Another Area
+              </button>
+            </div>
+          )}
         </Reveal>
       </div>
     </section>
   );
 }
 
-/* --------------------------------------------------------- architecture */
+/* ----------------------------------------------------------------- food */
 
-export function Architecture() {
+export function Food({ items }: { items: Catalog["items"] }) {
+  const cart = useCart();
+  const featured = items
+    .map((item) => ({ item, photo: dishImage(item.name) }))
+    .filter((x) => x.photo && x.item.available)
+    .slice(0, 4);
+
+  if (featured.length === 0) return null;
+
   return (
-    <section id="space" className="relative mx-auto max-w-[1600px] px-5 pb-24 md:px-10 md:pb-40">
-      <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-6 md:mb-20">
-        <div>
-          <p className="eyebrow">02 — The Space</p>
-          <h2 className="display mt-5 text-[clamp(2.25rem,5.5vw,4.5rem)] text-foreground">
-            Architecture you
-            <br />
-            walk through.
-          </h2>
-        </div>
-        <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-          Two levels, cantilevered boxes, exposed bracing and full-height glass — photographed on
-          site, exactly as it stands.
-        </p>
+    <section id="menu" className="mx-auto max-w-[1600px] px-5 pb-20 md:px-10 md:pb-28">
+      <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-14">
+        <h2 className="display text-[clamp(2.25rem,5.5vw,4.5rem)] text-foreground">
+          From the Kitchen
+        </h2>
+        <Link to="/order" className={btnGhost}>
+          View Full Menu
+        </Link>
       </Reveal>
 
-      <div className="relative grid gap-8 md:grid-cols-12 md:gap-6">
-        <Reveal className="md:col-span-8 md:col-start-5">
-          <figure>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
+        {featured.map(({ item, photo }, i) => (
+          <Reveal key={item.id} delay={(i % 4) * 100} as="figure" className="group">
             <Photo
-              image={I.exteriorNeon}
-              ratio="4 / 5"
-              sizes="(max-width: 768px) 100vw, 70vw"
+              image={photo!}
+              ratio="1 / 1"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               className="lift"
-              position="50% 60%"
+              imgClassName="transition-transform duration-700 group-hover:scale-105"
             />
-            <figcaption className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              The container facade at night
+            <figcaption className="mt-4 flex items-center justify-between gap-3 border-t border-border pt-4">
+              <span>
+                <span className="block text-base text-foreground">{item.name}</span>
+                <span className="mt-1 block font-mono text-sm text-muted-foreground">
+                  {formatPkr(item.price)}
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={() => cart.add({ id: item.id, name: item.name, price: item.price })}
+                className="shrink-0 rounded-xs border border-primary/60 bg-primary/10 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-foreground transition-colors hover:bg-primary/25"
+              >
+                Add
+              </button>
             </figcaption>
-          </figure>
-        </Reveal>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-        <Reveal delay={120} className="md:col-span-4 md:col-start-1 md:row-start-1 md:mt-32">
-          <figure>
-            <Photo
-              image={I.facadeWide}
-              ratio="4 / 3"
-              sizes="(max-width: 768px) 100vw, 40vw"
-              className="lift"
-            />
-            <figcaption className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              Elevated dining boxes, full building
-            </figcaption>
-          </figure>
-        </Reveal>
+/* -------------------------------------------------------------- reviews */
 
-        <Reveal delay={200} className="md:col-span-5 md:col-start-2 md:-mt-24">
-          <figure>
-            <Photo
-              image={I.exteriorSignage}
-              ratio="3 / 4"
-              sizes="(max-width: 768px) 100vw, 40vw"
-              className="lift"
-              position="50% 55%"
-            />
-            <figcaption className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              Signage and structure detail
-            </figcaption>
-          </figure>
+export function Reviews() {
+  const sources = [
+    { score: "4.2", of: "5", label: "Google", note: "857 reviews" },
+    { score: "4.6", of: "5", label: "Foodpanda", note: "242 ratings" },
+    { score: "5.0", of: "5", label: "TripAdvisor", note: "#124 of 631 in Lahore" },
+  ];
+  return (
+    <section id="reviews" className="border-y border-border bg-card/40">
+      <div className="mx-auto max-w-[1600px] px-5 py-16 md:px-10 md:py-24">
+        <Reveal>
+          <h2 className="display text-[clamp(2rem,5vw,4rem)] text-foreground">
+            What our guests say
+          </h2>
         </Reveal>
+        <div className="mt-10 grid gap-px bg-border md:grid-cols-3">
+          {sources.map((s, i) => (
+            <Reveal key={s.label} delay={i * 110} className="bg-background px-6 py-10 md:px-10">
+              <p className="display text-6xl text-primary md:text-7xl">
+                ★ {s.score}
+                <span className="text-2xl text-muted-foreground">/{s.of}</span>
+              </p>
+              <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.24em] text-accent">
+                {s.label}
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">{s.note}</p>
+            </Reveal>
+          ))}
+        </div>
+        <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          Ratings as published on each platform.
+        </p>
       </div>
     </section>
   );
@@ -292,127 +394,24 @@ export function AfterDark() {
         <div className="relative flex h-full items-center">
           <div className="mx-auto w-full max-w-[1600px] px-5 md:px-10">
             <Reveal>
-              <p className="eyebrow">03 — After Dark</p>
-              <h2 className="display mt-6 max-w-3xl text-[clamp(2.75rem,8vw,7rem)] text-foreground">
+              <h2 className="display max-w-3xl text-[clamp(2.75rem,8vw,7rem)] text-foreground">
                 After dark,
                 <br />
                 Loft 29 comes alive.
               </h2>
+              <a
+                href={`${CONTACT.whatsapp}?text=${encodeURIComponent("Hi Loft 29 — I'd like to reserve a table.")}`}
+                target="_blank"
+                rel="noreferrer noopener"
+                className={`${btnGhost} mt-9`}
+              >
+                Reserve a Table
+              </a>
             </Reveal>
           </div>
         </div>
       </div>
-
-      <div className="mx-auto max-w-[1600px] px-5 py-20 md:px-10 md:py-28">
-        <Reveal className="grid gap-10 md:grid-cols-3">
-          {[
-            ["Open-air deck", "Lantern-lit seating around the water feature, washed in magenta."],
-            ["Fire pit terrace", "An open flame on the patterned terrace once the light drops."],
-            ["Glass dining boxes", "Cantilevered rooms suspended over the lawn, glowing green."],
-          ].map(([t, d]) => (
-            <div key={t} className="border-t border-border pt-6">
-              <h3 className="display text-2xl text-foreground">{t}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{d}</p>
-            </div>
-          ))}
-        </Reveal>
-      </div>
     </section>
-  );
-}
-
-/* ----------------------------------------------------------------- food */
-
-export function Food() {
-  const featured = I.food.slice(0, 4);
-  return (
-    <section id="menu" className="mx-auto max-w-[1600px] px-5 pb-24 md:px-10 md:pb-36">
-      <Reveal className="mb-12 md:mb-20">
-        <p className="eyebrow">04 — From the Kitchen</p>
-        <h2 className="display mt-5 text-[clamp(2.25rem,5.5vw,4.5rem)] text-foreground">
-          Continental, wok
-          <br />
-          and open flame.
-        </h2>
-        <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground">
-          Four dishes photographed at Loft 29. The rest of the menu is listed below — order any of
-          it for delivery.
-        </p>
-      </Reveal>
-
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
-        {featured.map((dish, i) => (
-          <Reveal key={dish.name} delay={(i % 4) * 100} as="figure" className="group">
-            <Photo
-              image={dish}
-              ratio="1 / 1"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="lift"
-              imgClassName="transition-transform duration-700 group-hover:scale-105"
-            />
-            <figcaption className="mt-4 border-t border-border pt-4">
-              <span className="block text-base text-foreground">{dish.name}</span>
-              <span className="mt-1 block font-mono text-sm text-muted-foreground">
-                Rs.{dish.price.toLocaleString("en-PK")}
-              </span>
-              <Link
-                to="/order"
-                className="mt-4 inline-block rounded-xs border border-primary/60 bg-primary/10 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-foreground transition-colors hover:bg-primary/25"
-              >
-                Add to cart
-              </Link>
-            </figcaption>
-          </Reveal>
-        ))}
-      </div>
-
-      <FullMenu />
-    </section>
-  );
-}
-
-function FullMenu() {
-  const [openCat, setOpenCat] = useState<string | null>(loft29Menu[0]?.name ?? null);
-
-  return (
-    <div className="mt-20 border-t border-border pt-14 md:mt-28">
-      <p className="eyebrow">The full list</p>
-      <div className="mt-8 grid gap-x-16 gap-y-2 lg:grid-cols-2">
-        {loft29Menu.map((cat) => {
-          const open = openCat === cat.name;
-          return (
-            <div key={cat.name} className="border-b border-border">
-              <button
-                type="button"
-                onClick={() => setOpenCat(open ? null : cat.name)}
-                aria-expanded={open}
-                className="flex w-full items-center justify-between gap-4 py-5 text-left"
-              >
-                <span className="display text-xl text-foreground md:text-2xl">{cat.name}</span>
-                <span className="font-mono text-[10px] tracking-[0.2em] text-muted-foreground">
-                  {open ? "—" : `+${cat.items.length}`}
-                </span>
-              </button>
-              {open && (
-                <ul className="pb-6">
-                  {cat.items.map((item) => (
-                    <li
-                      key={item.name}
-                      className="flex items-baseline justify-between gap-6 py-1.5 text-sm"
-                    >
-                      <span className="text-muted-foreground">{item.name}</span>
-                      <span className="font-mono text-xs text-foreground/70">
-                        Rs.{item.price.toLocaleString("en-PK")}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
   );
 }
 
@@ -421,7 +420,7 @@ function FullMenu() {
 export function Events() {
   return (
     <section id="events" className="relative w-full overflow-hidden">
-      <div className="relative min-h-[90svh] w-full">
+      <div className="relative min-h-[80svh] w-full">
         <img
           src={I.containersNight.src}
           srcSet={I.containersNight.srcSet}
@@ -433,28 +432,22 @@ export function Events() {
           style={{ objectPosition: "50% 40%" }}
         />
         <div className="absolute inset-0 bg-background/55" />
-        <div className="relative mx-auto flex min-h-[90svh] max-w-[1600px] items-center px-5 py-24 md:px-10">
+        <div className="relative mx-auto flex min-h-[80svh] max-w-[1600px] items-center px-5 py-24 md:px-10">
           <Reveal className="max-w-2xl">
-            <p className="eyebrow">05 — Events</p>
-            <h2 className="display mt-6 text-[clamp(2.5rem,7vw,6rem)] text-foreground">
+            <h2 className="display text-[clamp(2.5rem,7vw,6rem)] text-foreground">
               Make it
               <br />a Loft 29 moment.
             </h2>
-            <ul className="mt-10 grid max-w-md grid-cols-2 gap-px bg-border">
-              {["Birthdays", "Anniversaries", "Private Events", "Celebrations"].map((x) => (
-                <li
-                  key={x}
-                  className="bg-background/70 px-5 py-5 font-mono text-[11px] uppercase tracking-[0.18em] text-foreground backdrop-blur-sm"
-                >
-                  {x}
-                </li>
-              ))}
-            </ul>
+            <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-accent">
+              Birthdays • Anniversaries • Private Events • Celebrations
+            </p>
             <a
-              href="#reserve"
-              className="neon-ring mt-10 inline-block rounded-xs bg-primary px-8 py-4 font-mono text-[11px] uppercase tracking-[0.25em] text-primary-foreground transition-transform hover:-translate-y-0.5"
+              href={`${CONTACT.whatsapp}?text=${encodeURIComponent("Hi Loft 29 — I'd like to plan an event.")}`}
+              target="_blank"
+              rel="noreferrer noopener"
+              className={`${btnPrimary} mt-9`}
             >
-              Plan your event
+              Plan Your Event
             </a>
           </Reveal>
         </div>
@@ -463,208 +456,11 @@ export function Events() {
   );
 }
 
-/* -------------------------------------------------------------- gallery */
+/* -------------------------------------------------------------- contact */
 
-export function Gallery() {
-  // Curated: nine frames, none of them reused from the sections above.
-  const shots: { img: Loft29Image; tag: string }[] = [
-    { img: I.lawnPool, tag: "Space" },
-    { img: I.terraceLights, tag: "Space" },
-    { img: I.containersNight, tag: "Night" },
-    { img: I.firepit, tag: "Night" },
-    ...I.food.slice(4, 9).map((f) => ({ img: f, tag: "Food" })),
-  ];
-
+export function Contact() {
   return (
-    <section id="gallery" className="mx-auto max-w-[1600px] px-5 py-24 md:px-10 md:py-36">
-      <Reveal className="mb-12 md:mb-16">
-        <p className="eyebrow">06 — Gallery</p>
-        <h2 className="display mt-5 text-[clamp(2.25rem,5.5vw,4.5rem)] text-foreground">
-          Every frame, real.
-        </h2>
-        <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground">
-          Nine photographs of Loft 29 — the venue as guests have shot it, and the restaurant's own
-          dish photography. Nothing generated, nothing borrowed.
-        </p>
-      </Reveal>
-
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-        {shots.map(({ img, tag }, i) => (
-          <Reveal key={img.src} delay={(i % 3) * 80} as="figure">
-            <Photo
-              image={img}
-              ratio="1 / 1"
-              sizes="(max-width: 640px) 50vw, 33vw"
-            />
-            <figcaption className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              {tag}
-            </figcaption>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* -------------------------------------------------------------- reviews */
-
-export function Reviews() {
-  const sources = [
-    { score: "4.2", of: "5", label: "Google", note: "857 reviews · Block D, Park View CHS" },
-    { score: "4.6", of: "5", label: "Foodpanda", note: "242 ratings · Continental & Western" },
-    { score: "5.0", of: "5", label: "TripAdvisor", note: "#124 of 631 restaurants in Lahore" },
-  ];
-  return (
-    <section className="border-y border-border bg-card/40">
-      <div className="mx-auto max-w-[1600px] px-5 py-20 md:px-10 md:py-28">
-        <Reveal>
-          <p className="eyebrow">07 — What guests rate it</p>
-        </Reveal>
-        <div className="mt-12 grid gap-px bg-border md:grid-cols-3">
-          {sources.map((s, i) => (
-            <Reveal key={s.label} delay={i * 110} className="bg-background px-6 py-12 md:px-10">
-              <p className="display text-6xl text-primary md:text-7xl">
-                {s.score}
-                <span className="text-2xl text-muted-foreground">/{s.of}</span>
-              </p>
-              <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.24em] text-accent">
-                {s.label}
-              </p>
-              <p className="mt-2 text-sm text-muted-foreground">{s.note}</p>
-            </Reveal>
-          ))}
-        </div>
-        <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-          Ratings as published on each platform.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------------------------------------- reserve */
-
-export function Reserve() {
-  const [form, setForm] = useState({ name: "", guests: "2", date: "", time: "20:00", note: "" });
-
-  const message = encodeURIComponent(
-    `Hi Loft 29 — I'd like to book a table.\nName: ${form.name || "-"}\nGuests: ${form.guests}\nDate: ${
-      form.date || "-"
-    }\nTime: ${form.time}\n${form.note ? `Note: ${form.note}` : ""}`,
-  );
-
-  const field =
-    "w-full border-b border-border bg-transparent py-3 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent";
-
-  return (
-    <section id="reserve" className="mx-auto max-w-[1600px] px-5 py-24 md:px-10 md:py-36">
-      <div className="grid gap-14 lg:grid-cols-[1fr_1fr] lg:gap-24">
-        <Reveal>
-          <p className="eyebrow">08 — Reservations</p>
-          <h2 className="display mt-5 text-[clamp(2.25rem,5.5vw,4.5rem)] text-foreground">
-            Hold a table
-            <br />
-            under the containers.
-          </h2>
-          <p className="mt-8 max-w-md text-sm leading-relaxed text-muted-foreground">
-            Send us the details and we'll confirm on WhatsApp. For large groups and event setups,
-            call us directly.
-          </p>
-          <a
-            href={CONTACT.phoneHref}
-            className="mt-8 inline-block font-mono text-lg tracking-[0.1em] text-accent hover:underline"
-          >
-            {CONTACT.phone}
-          </a>
-        </Reveal>
-
-        <Reveal delay={120}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              window.open(`${CONTACT.whatsapp}?text=${message}`, "_blank", "noopener");
-            }}
-            className="grid gap-6"
-          >
-            <label className="block">
-              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                Name
-              </span>
-              <input
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Your name"
-                className={field}
-              />
-            </label>
-            <div className="grid gap-6 sm:grid-cols-3">
-              <label className="block">
-                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  Guests
-                </span>
-                <input
-                  type="number"
-                  min={1}
-                  max={200}
-                  value={form.guests}
-                  onChange={(e) => setForm({ ...form, guests: e.target.value })}
-                  className={field}
-                />
-              </label>
-              <label className="block">
-                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  Date
-                </span>
-                <input
-                  type="date"
-                  required
-                  value={form.date}
-                  onChange={(e) => setForm({ ...form, date: e.target.value })}
-                  className={field}
-                />
-              </label>
-              <label className="block">
-                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  Time
-                </span>
-                <input
-                  type="time"
-                  value={form.time}
-                  onChange={(e) => setForm({ ...form, time: e.target.value })}
-                  className={field}
-                />
-              </label>
-            </div>
-            <label className="block">
-              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                Occasion / notes
-              </span>
-              <input
-                value={form.note}
-                onChange={(e) => setForm({ ...form, note: e.target.value })}
-                placeholder="Birthday setup, outdoor table…"
-                className={field}
-              />
-            </label>
-            <button
-              type="submit"
-              className="neon-ring mt-2 justify-self-start rounded-xs bg-primary px-8 py-4 font-mono text-[11px] uppercase tracking-[0.25em] text-primary-foreground transition-transform hover:-translate-y-0.5"
-            >
-              Send on WhatsApp
-            </button>
-          </form>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------------------------------------- location */
-
-export function Location() {
-  return (
-    <section id="location" className="relative w-full overflow-hidden border-t border-border">
+    <section id="contact" className="relative w-full overflow-hidden border-t border-border">
       <div className="grid lg:grid-cols-2">
         <Photo
           image={I.terraceLights}
@@ -672,15 +468,12 @@ export function Location() {
           sizes="(max-width: 1024px) 100vw, 50vw"
           className="h-full w-full lg:aspect-auto"
         />
-        <div className="flex items-center bg-card/40 px-5 py-20 md:px-14">
+        <div className="flex items-center bg-card/40 px-5 py-16 md:px-14 md:py-20">
           <Reveal>
-            <p className="eyebrow">09 — Find us</p>
-            <h2 className="display mt-5 text-[clamp(2rem,4.5vw,3.5rem)] text-foreground">
-              Paragon City,
-              <br />
-              Lahore.
+            <h2 className="display text-[clamp(2rem,4.5vw,3.5rem)] text-foreground">
+              Contact Loft 29
             </h2>
-            <dl className="mt-10 grid gap-7 text-sm">
+            <dl className="mt-8 grid gap-6 text-sm">
               <div>
                 <dt className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">
                   Address
@@ -690,14 +483,7 @@ export function Location() {
               </div>
               <div>
                 <dt className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">
-                  Hours
-                </dt>
-                <dd className="mt-2 text-muted-foreground">Sun – Thu · 3:00 PM – 1:30 AM</dd>
-                <dd className="text-muted-foreground">Fri – Sat · 3:00 PM – 2:00 AM</dd>
-              </div>
-              <div>
-                <dt className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">
-                  Contact
+                  Phone
                 </dt>
                 <dd className="mt-2">
                   <a href={CONTACT.phoneHref} className="text-muted-foreground hover:text-accent">
@@ -705,15 +491,35 @@ export function Location() {
                   </a>
                 </dd>
               </div>
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">
+                  Hours
+                </dt>
+                <dd className="mt-2 text-muted-foreground">Sun – Thu · 3:00 PM – 1:30 AM</dd>
+                <dd className="text-muted-foreground">Fri – Sat · 3:00 PM – 2:00 AM</dd>
+              </div>
             </dl>
-            <a
-              href={CONTACT.maps}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="mt-10 inline-block rounded-xs border border-foreground/40 px-7 py-4 font-mono text-[11px] uppercase tracking-[0.25em] text-foreground transition-colors hover:border-accent hover:text-accent"
-            >
-              Open in Maps
-            </a>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <a
+                href={CONTACT.maps}
+                target="_blank"
+                rel="noreferrer noopener"
+                className={btnGhost}
+              >
+                Get Directions
+              </a>
+              <a href={CONTACT.phoneHref} className={btnGhost}>
+                Call
+              </a>
+              <a
+                href={`${CONTACT.whatsapp}?text=${encodeURIComponent("Hi Loft 29 — I'd like to reserve a table.")}`}
+                target="_blank"
+                rel="noreferrer noopener"
+                className={btnPrimary}
+              >
+                Reserve a Table
+              </a>
+            </div>
           </Reveal>
         </div>
       </div>
@@ -725,19 +531,54 @@ export function Location() {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border">
-      <div className="mx-auto flex max-w-[1600px] flex-col gap-6 px-5 py-12 md:flex-row md:items-end md:justify-between md:px-10">
+    <footer className="border-t border-border pb-20 md:pb-0">
+      <div className="mx-auto grid max-w-[1600px] gap-10 px-5 py-12 md:grid-cols-[1fr_auto_auto] md:px-10">
         <div>
           <p className="display text-4xl text-foreground">
             Loft<span className="text-primary">29</span>
           </p>
-          <p className="mt-3 max-w-md font-mono text-[10px] uppercase leading-relaxed tracking-[0.18em] text-muted-foreground">
-            All photography on this site is of the actual Loft 29 in Lahore.
-          </p>
+          <p className="mt-3 text-sm text-muted-foreground">{CONTACT.address}</p>
+          <a
+            href={CONTACT.phoneHref}
+            className="mt-2 block font-mono text-sm text-accent hover:underline"
+          >
+            {CONTACT.phone}
+          </a>
         </div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-          © {new Date().getFullYear()} Loft 29 · Paragon City, Lahore
-        </p>
+
+        <nav className="grid gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+          <Link to="/order" className="hover:text-accent">
+            Order Online
+          </Link>
+          <a href="#menu" className="hover:text-accent">
+            Menu
+          </a>
+          <a href="#events" className="hover:text-accent">
+            Events
+          </a>
+          <a href="#contact" className="hover:text-accent">
+            Contact
+          </a>
+          <a href={CONTACT.maps} target="_blank" rel="noreferrer noopener" className="hover:text-accent">
+            Location
+          </a>
+        </nav>
+
+        <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+          <p>Sun – Thu · 3 PM – 1:30 AM</p>
+          <p className="mt-2">Fri – Sat · 3 PM – 2 AM</p>
+          <a
+            href={CONTACT.whatsapp}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-4 block hover:text-accent"
+          >
+            WhatsApp
+          </a>
+        </div>
+      </div>
+      <div className="border-t border-border px-5 py-6 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground md:px-10">
+        © {new Date().getFullYear()} Loft 29 · Paragon City, Lahore
       </div>
     </footer>
   );
