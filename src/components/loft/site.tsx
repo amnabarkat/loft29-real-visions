@@ -10,9 +10,9 @@ import type { Catalog } from "@/lib/ordering.functions";
 const I = loft29Images;
 
 export const CONTACT = {
-  phone: "+92 322 2132221",
-  phoneHref: "tel:+923222132221",
-  whatsapp: "https://wa.me/923222132221",
+  phone: "0300 8489980",
+  phoneHref: "tel:+9230008489980",
+  whatsapp: "https://wa.me/03008489980",
   address: "Opposite Paragon Gate 2, Street 360, Barki Road, Lahore",
   area: "Block D, Park View CHS — Paragon City, Lahore",
   maps: "https://www.google.com/maps/search/?api=1&query=Loft+29+Lahore",
@@ -168,7 +168,7 @@ export function Hero() {
                 Order Online
               </Link>
               <a
-                href={`${CONTACT.whatsapp}?text=${encodeURIComponent("Hi Loft 29 — I'd like to reserve a table.")}`}
+                href={CONTACT.whatsapp}
                 target="_blank"
                 rel="noreferrer noopener"
                 className={btnGhost}
@@ -400,7 +400,7 @@ export function AfterDark() {
                 Loft 29 comes alive.
               </h2>
               <a
-                href={`${CONTACT.whatsapp}?text=${encodeURIComponent("Hi Loft 29 — I'd like to reserve a table.")}`}
+                href={CONTACT.whatsapp}
                 target="_blank"
                 rel="noreferrer noopener"
                 className={`${btnGhost} mt-9`}
@@ -442,7 +442,7 @@ export function Events() {
               Birthdays • Anniversaries • Private Events • Celebrations
             </p>
             <a
-              href={`${CONTACT.whatsapp}?text=${encodeURIComponent("Hi Loft 29 — I'd like to plan an event.")}`}
+              href={CONTACT.whatsapp}
               target="_blank"
               rel="noreferrer noopener"
               className={`${btnPrimary} mt-9`}
@@ -512,7 +512,7 @@ export function Contact() {
                 Call
               </a>
               <a
-                href={`${CONTACT.whatsapp}?text=${encodeURIComponent("Hi Loft 29 — I'd like to reserve a table.")}`}
+                href={CONTACT.whatsapp}
                 target="_blank"
                 rel="noreferrer noopener"
                 className={btnPrimary}
