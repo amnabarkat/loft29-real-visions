@@ -10,9 +10,9 @@ import type { Catalog } from "@/lib/ordering.functions";
 const I = loft29Images;
 
 export const CONTACT = {
-  phone: "+92 322 2132221",
-  phoneHref: "tel:+923222132221",
-  whatsapp: "https://wa.me/923222132221",
+  phone: "0300 8489980",
+  phoneHref: "tel:+9230008489980",
+  whatsapp: "https://wa.me/03008489980",
   address: "Opposite Paragon Gate 2, Street 360, Barki Road, Lahore",
   area: "Block D, Park View CHS — Paragon City, Lahore",
   maps: "https://www.google.com/maps/search/?api=1&query=Loft+29+Lahore",
