@@ -167,12 +167,7 @@ export function Hero() {
               <Link to="/order" className={btnPrimary}>
                 Order Online
               </Link>
-              <a
-                href={CONTACT.whatsapp}
-                target="_blank"
-                rel="noreferrer noopener"
-                className={btnGhost}
-              >
+              <a href={CONTACT.whatsapp} className={btnGhost}>
                 Reserve a Table
               </a>
             </div>
@@ -399,12 +394,7 @@ export function AfterDark() {
                 <br />
                 Loft 29 comes alive.
               </h2>
-              <a
-                href={CONTACT.whatsapp}
-                target="_blank"
-                rel="noreferrer noopener"
-                className={`${btnGhost} mt-9`}
-              >
+              <a href={CONTACT.whatsapp} className={`${btnGhost} mt-9`}>
                 Reserve a Table
               </a>
             </Reveal>
@@ -441,12 +431,7 @@ export function Events() {
             <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-accent">
               Birthdays • Anniversaries • Private Events • Celebrations
             </p>
-            <a
-              href={CONTACT.whatsapp}
-              target="_blank"
-              rel="noreferrer noopener"
-              className={`${btnPrimary} mt-9`}
-            >
+            <a href={CONTACT.whatsapp} className={`${btnPrimary} mt-9`}>
               Plan Your Event
             </a>
           </Reveal>
@@ -511,12 +496,7 @@ export function Contact() {
               <a href={CONTACT.phoneHref} className={btnGhost}>
                 Call
               </a>
-              <a
-                href={CONTACT.whatsapp}
-                target="_blank"
-                rel="noreferrer noopener"
-                className={btnPrimary}
-              >
+              <a href={CONTACT.whatsapp} className={btnPrimary}>
                 Reserve a Table
               </a>
             </div>
@@ -567,12 +547,7 @@ export function SiteFooter() {
         <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
           <p>Sun – Thu · 3 PM – 1:30 AM</p>
           <p className="mt-2">Fri – Sat · 3 PM – 2 AM</p>
-          <a
-            href={CONTACT.whatsapp}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="mt-4 block hover:text-accent"
-          >
+          <a href={CONTACT.whatsapp} className="mt-4 block hover:text-accent">
             WhatsApp
           </a>
         </div>
