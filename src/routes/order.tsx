@@ -136,15 +136,7 @@ function OrderPage() {
           return (
             <li key={item.id} className="flex items-start gap-4 py-5">
               {(() => {
-                const photo =
-                  item.image_src && item.image_lqip
-                    ? {
-                        src: item.image_src,
-                        srcSet: item.image_srcset ?? item.image_src,
-                        lqip: item.image_lqip,
-                        alt: `Loft 29 ${item.name}`,
-                      }
-                    : dishImage(item.name);
+                const photo = dishImage(item.name);
                 if (!photo) return null;
                 return (
                   <div className="w-[70px] shrink-0 sm:w-[96px]">

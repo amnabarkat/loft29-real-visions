@@ -93,134 +93,54 @@ const orderSchema = z.object({
 
 export type PlaceOrderInput = z.infer<typeof orderSchema>;
 
+function rpcMessage(error: { message: string } | null, fallback: string) {
+  const raw = error?.message?.trim();
+  if (!raw) return fallback;
+  return raw.replace(/^[A-Z0-9]+:\s*/, "").replace(/^ERROR:\s*/i, "") || fallback;
+}
+
 export const placeOrder = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => orderSchema.parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { data: settings } = await supabaseAdmin
-      .from("restaurant_settings")
-      .select("*")
-      .eq("id", 1)
-      .maybeSingle();
-    if (!settings) throw new Error("Ordering is temporarily unavailable.");
-    if (!settings.accepting_orders)
-      throw new Error("Loft 29 is not accepting online orders right now.");
-    if (data.paymentMethod === "cod" && !settings.cod_enabled)
-      throw new Error("Cash on delivery is currently unavailable.");
-    if (data.paymentMethod === "bank_transfer" && !settings.bank_transfer_enabled)
-      throw new Error("Bank transfer is currently unavailable.");
-
-    const { data: zone } = await supabaseAdmin
-      .from("delivery_zones")
-      .select("*")
-      .eq("id", data.zoneId)
-      .maybeSingle();
-    if (!zone || !zone.active) throw new Error("We do not deliver to that area yet.");
-
-    const ids = [...new Set(data.items.map((i) => i.id))];
-    const { data: menuItems } = await supabaseAdmin
-      .from("menu_items")
-      .select("id, name, price, available")
-      .in("id", ids);
-
-    const byId = new Map((menuItems ?? []).map((m) => [m.id, m]));
-    const lines = data.items.map((line) => {
-      const item = byId.get(line.id);
-      if (!item) throw new Error("One of the items is no longer on the menu.");
-      if (!item.available) throw new Error(`${item.name} is currently sold out.`);
-      return {
-        menu_item_id: item.id,
-        name_snapshot: item.name,
-        price_snapshot: item.price,
-        quantity: line.quantity,
-        subtotal: item.price * line.quantity,
-      };
-    });
-
-    const subtotal = lines.reduce((sum, l) => sum + l.subtotal, 0);
-    if (subtotal < zone.minimum_order)
-      throw new Error(
-        `Minimum order for ${zone.name} is Rs. ${zone.minimum_order.toLocaleString("en-PK")}.`,
-      );
-
-    const taxAmount = settings.tax_enabled ? Math.round((subtotal * Number(settings.tax_rate)) / 100) : 0;
-    const serviceCharge = settings.service_charge_enabled
-      ? Math.round((subtotal * Number(settings.service_charge_rate)) / 100)
-      : 0;
-    const packagingFee = settings.packaging_fee_enabled ? settings.packaging_fee : 0;
-    const total = subtotal + zone.delivery_fee + taxAmount + serviceCharge + packagingFee;
-
-    const { data: order, error } = await supabaseAdmin
-      .from("orders")
-      .insert({
-        customer_name: data.customerName,
+    const supabase = publicClient();
+    const { data: result, error } = await supabase.rpc("place_order", {
+      payload: {
+        customerName: data.customerName,
         phone: data.phone,
-        email: data.email || null,
-        zone_id: zone.id,
-        zone_name: zone.name,
-        delivery_address: data.address,
-        house: data.house || null,
-        floor: data.floor || null,
-        landmark: data.landmark || null,
-        instructions: data.instructions || null,
-        estimated_time: zone.estimated_time,
-        subtotal,
-        delivery_fee: zone.delivery_fee,
-        tax_amount: taxAmount,
-        service_charge: serviceCharge,
-        packaging_fee: packagingFee,
-        total,
-        payment_method: data.paymentMethod,
-      })
-      .select("id, order_number, total, estimated_time")
-      .single();
-    if (error || !order) throw new Error("We couldn't save your order. Please try again.");
-
-    const { error: itemsError } = await supabaseAdmin
-      .from("order_items")
-      .insert(lines.map((l) => ({ ...l, order_id: order.id })));
-    if (itemsError) {
-      await supabaseAdmin.from("orders").delete().eq("id", order.id);
-      throw new Error("We couldn't save your order items. Please try again.");
+        email: data.email || "",
+        zoneId: data.zoneId,
+        address: data.address,
+        house: data.house || "",
+        floor: data.floor || "",
+        landmark: data.landmark || "",
+        instructions: data.instructions || "",
+        paymentMethod: data.paymentMethod,
+        items: data.items,
+      },
+    });
+    if (error || !result) {
+      throw new Error(rpcMessage(error, "We couldn't save your order. Please try again."));
     }
 
-    await supabaseAdmin
-      .from("order_status_events")
-      .insert({ order_id: order.id, status: "new", note: "Order placed online" });
-
+    const placed = result as {
+      id: string;
+      orderNumber: string;
+      total: number;
+      estimatedTime: string;
+    };
     return {
-      id: order.id,
-      orderNumber: order.order_number,
-      total: order.total,
-      estimatedTime: order.estimated_time,
+      id: placed.id,
+      orderNumber: placed.orderNumber,
+      total: placed.total,
+      estimatedTime: placed.estimatedTime,
     };
   });
 
 export const getOrderStatus = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: order } = await supabaseAdmin
-      .from("orders")
-      .select(
-        "id, order_number, customer_name, zone_name, delivery_address, estimated_time, subtotal, delivery_fee, tax_amount, service_charge, packaging_fee, total, payment_method, payment_status, order_status, created_at",
-      )
-      .eq("id", data.id)
-      .maybeSingle();
-    if (!order) return null;
-
-    const [{ data: items }, { data: events }] = await Promise.all([
-      supabaseAdmin
-        .from("order_items")
-        .select("name_snapshot, price_snapshot, quantity, subtotal")
-        .eq("order_id", order.id),
-      supabaseAdmin
-        .from("order_status_events")
-        .select("status, note, created_at")
-        .eq("order_id", order.id)
-        .order("created_at"),
-    ]);
-
-    return { order, items: items ?? [], events: events ?? [] };
+    const supabase = publicClient();
+    const { data: result, error } = await supabase.rpc("get_order_status", { _id: data.id });
+    if (error) throw new Error(rpcMessage(error, "We couldn't load this order."));
+    return (result as OrderStatusData) ?? null;
   });

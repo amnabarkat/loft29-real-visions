@@ -6,13 +6,23 @@ import { loft29Images } from "@/lib/loft29-images";
 import { dishImage, formatPkr } from "@/lib/menu-images";
 import { useCart } from "@/context/cart";
 import type { Catalog } from "@/lib/ordering.functions";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 const I = loft29Images;
 
 export const CONTACT = {
   phone: "+92 322 2132221",
-  phoneHref: "tel:+923222132221",
-  whatsapp: "https://wa.me/923222132221",
+  phoneHref: "tel:+923008489980",
+  whatsapp: "https://wa.me/923008489980",
   address: "Opposite Paragon Gate 2, Street 360, Barki Road, Lahore",
   area: "Block D, Park View CHS — Paragon City, Lahore",
   maps: "https://www.google.com/maps/search/?api=1&query=Loft+29+Lahore",
@@ -32,9 +42,19 @@ const btnGhost =
 
 /* ------------------------------------------------------------------ nav */
 
+function openWhatsAppChat(text: string) {
+  const trimmed = text.trim();
+  const url = trimmed
+    ? `${CONTACT.whatsapp}?text=${encodeURIComponent(trimmed)}`
+    : CONTACT.whatsapp;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
 export function SiteNav() {
   const [solid, setSolid] = useState(false);
   const [open, setOpen] = useState(false);
+  const [whatsappOpen, setWhatsappOpen] = useState(false);
+  const [whatsappText, setWhatsappText] = useState("");
   const { count, hydrated } = useCart();
 
   useEffect(() => {
@@ -43,6 +63,12 @@ export function SiteNav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const sendWhatsApp = () => {
+    openWhatsAppChat(whatsappText);
+    setWhatsappText("");
+    setWhatsappOpen(false);
+  };
 
   return (
     <header
@@ -68,6 +94,44 @@ export function SiteNav() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <Dialog open={whatsappOpen} onOpenChange={setWhatsappOpen}>
+            <DialogTrigger asChild>
+              <button type="button">WhatsApp</button>
+            </DialogTrigger>
+            <DialogContent className="rounded-xs sm:rounded-xs">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  sendWhatsApp();
+                }}
+              >
+                <DialogHeader>
+                  <DialogTitle className="font-mono text-sm uppercase tracking-[0.22em]">
+                    WhatsApp
+                  </DialogTitle>
+                  <DialogDescription>Type a message, then send to open the chat.</DialogDescription>
+                </DialogHeader>
+                <Textarea
+                  className="mt-4 min-h-30 rounded-xs"
+                  value={whatsappText}
+                  onChange={(e) => setWhatsappText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                      e.preventDefault();
+                      sendWhatsApp();
+                    }
+                  }}
+                  placeholder="Write your message…"
+                  autoFocus
+                />
+                <DialogFooter className="mt-4">
+                  <button type="submit" className={btnPrimary}>
+                    Send
+                  </button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
           <Link
             to="/order"
             className="rounded-xs bg-primary px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-primary-foreground transition-transform hover:-translate-y-0.5"
@@ -500,12 +564,7 @@ export function Contact() {
               </div>
             </dl>
             <div className="mt-9 flex flex-wrap gap-3">
-              <a
-                href={CONTACT.maps}
-                target="_blank"
-                rel="noreferrer noopener"
-                className={btnGhost}
-              >
+              <a href={CONTACT.maps} target="_blank" rel="noreferrer noopener" className={btnGhost}>
                 Get Directions
               </a>
               <a href={CONTACT.phoneHref} className={btnGhost}>
@@ -559,7 +618,12 @@ export function SiteFooter() {
           <a href="#contact" className="hover:text-accent">
             Contact
           </a>
-          <a href={CONTACT.maps} target="_blank" rel="noreferrer noopener" className="hover:text-accent">
+          <a
+            href={CONTACT.maps}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="hover:text-accent"
+          >
             Location
           </a>
         </nav>
