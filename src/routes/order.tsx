@@ -5,6 +5,7 @@ import { OrderShell, Field, inputClass } from "@/components/loft/order-shell";
 import { useCart } from "@/context/cart";
 import { dishImage, formatPkr } from "@/lib/menu-images";
 import { Photo } from "@/components/loft/Photo";
+import { CONTACT } from "@/components/loft/site";
 
 const title = "Order Online — Loft 29 Paragon City, Lahore";
 const description =
@@ -62,8 +63,8 @@ function OrderPage() {
       {!settings?.accepting_orders && (
         <p className="mt-6 border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-foreground">
           We're not accepting online orders right now. Call {""}
-          <a className="text-accent" href="tel:+923222132221">
-            +92 322 2132221
+          <a className="text-accent" href={CONTACT.phoneHref}>
+            {CONTACT.phone}
           </a>
           .
         </p>
